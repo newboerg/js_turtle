@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>JS Turtle</title>
+  <style media="screen">
+  body{
+    background-color: lightblue;
+  }
+  #sandkasten{
+    border: 1px solid black;
+    background-color: white;
+  }
+  div.buttons{
+    position: absolute;
+    right: 0px;
+    top:0px;
+    background-color: lightgrey;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px;
+  }
+  #btnGo{
+    width: 500px;
+    height: 100px;
+    font-size: 50px;
+  }
+  </style>
+  <script type="text/javascript">
+  var _x;
+  var _y;
+  var _w;
+  var _ctx;
+  var _zeichne;
+  var _font;
+  var _fuellfarbe;
+  var _linienfarbe;
+  var _zeit;
+  function _btnClick() {
+    _zeit = document.getElementById('zeit').value;
+    var _code= document.getElementById('prog').value;
+    var _acode=_code.split(";\n");
+    var _rahmen= document.getElementById('sandkasten');
+    _ctx = _rahmen.getContext('2d');
+    _rahmen.width = _rahmen.width;
+    _x=250;
+    _y=250;
+    _w=0;
+    _zeichne=true
+    _fuellfarbe="black";
+    _linienfarbe="black";
+    _font="10px Arial";
+    _ctx.moveTo(_x,_y);
+    _ctx.fillStyle = _fuellfarbe;
+    _ctx.strokeStyle = _linienfarbe;
+    // _acode.forEach(function(element,index,collection){
+    //   setTimeout(function(){
+    //     eval(element);
+    // 
+    //   }, index*_zeit);
+    // });
+
+    eval(_code);
+    _ctx.stroke();
+  }
+  function rechts(winkel) {
+    _w=(_w+winkel)%360;
+  }
+  function links(winkel) {
+    _w=(_w-winkel)%360;
+  }
+  function vor(entfernung) {
+    var neuX;
+    var neuY;
+    var wRad=_w*Math.PI/180;
+    neuX = _x + Math.cos(wRad)*entfernung;
+    neuY = _y +Math.sin(wRad)*entfernung;
+    if(_zeichne)
+    _ctx.lineTo(neuX,neuY);
+    else {
+      _ctx.moveTo(neuX,neuY);
+    }
+    _x=neuX;
+    _y=neuY;
+
+  }
+  function zurueck(entfernung) {
+    vor(-entfernung);
+  }
+  function stiftHoch() {
+    _zeichne=false;
+  }
+  function stiftRunter() {
+    _zeichne=true;
+  }
+  function sage(wort) {
+    _ctx.font = _font;
+    _ctx.fillText(wort,_x,_y);
+  }
+  function setzeSchriftgroesse(zahl) {
+    _font = "" + zahl + "px Arial";
+  }
+  function setzeFuellfarbe(farbe) {
+    _fuellfarbe = farbe;
+    _ctx.fillStyle = _fuellfarbe;
+  }
+  function setzeLinienfarbe(farbe) {
+    _linienfarbe = farbe;
+    _ctx.strokeStyle = _linienfarbe;
+  }
+  function beginneFuellung(){
+    _ctx.beginPath();
+  }
+  function beendeFuellung(){
+    _ctx.closePath();
+    _ctx.fill();
+  }
+  function gibMirX(){
+    return _x;
+  }
+  function gibMirY() {
+    return _y;
+  }
+  function gibMirDieRichtung() {
+    return _w;
+  }
+  function setzeAbsoluteRichtung(w) {
+    _w=w;
+  }
+  function setzeHintergrundfarbe(farbe) {
+    document.getElementById('sandkasten').style.backgroundColor=farbe;
+  }
+</script>
+</head>
+<body>
+  <h1>Javascript Turtle von Herr Neuberg für's BFW-Dortmund</h1>
+  <canvas id="sandkasten" width="500" height="500"></canvas>
+  <textarea id="prog" name="prog" rows="33" cols="60"></textarea> <br>
+  <label for="zeit">Warte pro Schritt</label>
+  <input type="range" id="zeit" min="0" value="100" max="1000" step="100" onchange="document.getElementById('oZeit').value=''+this.value+'ms';">
+  <output id="oZeit">100ms</output>
+  <div class="buttons">
+    <h1>Befehle</h1>
+    <button type="button" id="vor" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">vor(50)</button> <br>
+    <button type="button" id="zurueck" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">zurueck(50)</button> <br>
+    <button type="button" id="rechts" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">rechts(90)</button> <br>
+    <button type="button" id="links" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">links(90)</button> <br>
+    <hr>
+    <button type="button" id="stiftHoch" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">stiftHoch()</button> <br>
+    <button type="button" id="stiftRunter" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">stiftRunter()</button> <br>
+    <button type="button" id="beginneFuellung" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">beginneFuellung()</button> <br>
+    <button type="button" id="beendeFuellung" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">beendeFuellung()</button> <br>
+    <hr>
+    <button type="button" id="sage" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">sage("Hallo")</button> <br>
+    <hr>
+    <button type="button" id="setzeSchriftgroesse" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">setzeSchriftgroesse(15)</button> <br>
+    <button type="button" id="setzeFuellfarbe" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">setzeFuellfarbe("green")</button> <br>
+    <button type="button" id="setzeLinienfarbe" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">setzeLinienfarbe("red")</button> <br>
+    <button type="button" id="setzeHintergrundfarbe" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">setzeHintergrundfarbe("blue")</button> <br>
+    <button type="button" id="setzeAbsoluteRichtung" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">setzeAbsoluteRichtung(0)</button> <br>
+    <hr>
+    <button type="button" id="gibMirX" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">gibMirX()</button> <br>
+    <button type="button" id="gibMirY" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">gibMirY()</button> <br>
+    <button type="button" id="gibMirDieRichtung" onclick="document.getElementById('prog').value += (this.innerHTML +';\n')">gibMirDieRichtung()</button> <br>
+
+  </div>
+  <button type="button" id="btnGo" onclick="_btnClick();" >Los geht's</button><br>
+  <script type="text/javascript">
+
+
+  </script>
+</body>
+</html>
