@@ -36,10 +36,33 @@
   var _fuellfarbe;
   var _linienfarbe;
   var _zeit;
-  function _btnClick() {
+  var _acode;
+  function parseJStoArray(text){
+    var i = 0;
+    var j=i;
+    var geschweifteKlammern=0;
+    var tmp2 =[];
+    while (i<text.length){
+      if (text[i] =="{") geschweifteKlammern++;
+      if (text[i] =="}") geschweifteKlammern--;
+      if (((text[i] ==";"  | text[i]=="}")& text[i+1]=="\n" & geschweifteKlammern==0) ){
+        tmp2.push(text.slice(j,i+1))
+        j=i+2;
+      }
+      i++;
+    }
+    tmp2.push(text.slice(j,i))
+    return tmp2;
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+   async function _btnClick() {
     _zeit = document.getElementById('zeit').value;
     var _code= document.getElementById('prog').value;
-    var _acode=_code.split(";\n");
+    _acode=parseJStoArray(_code);
     var _rahmen= document.getElementById('sandkasten');
     _ctx = _rahmen.getContext('2d');
     _rahmen.width = _rahmen.width;
@@ -53,15 +76,16 @@
     _ctx.moveTo(_x,_y);
     _ctx.fillStyle = _fuellfarbe;
     _ctx.strokeStyle = _linienfarbe;
-    // _acode.forEach(function(element,index,collection){
-    //   setTimeout(function(){
-    //     eval(element);
-    // 
-    //   }, index*_zeit);
-    // });
+    //console.log(_acode);
+    for (let _index =0; _index<_acode.length;_index++){
 
-    eval(_code);
-    _ctx.stroke();
+      eval(_acode[_index]);
+      _ctx.stroke();
+      await sleep(_zeit);
+    }
+
+   //eval(_code);
+
   }
   function rechts(winkel) {
     _w=(_w+winkel)%360;
